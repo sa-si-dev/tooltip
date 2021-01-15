@@ -51,3 +51,7 @@ function replacePlaceholders(content) {
 
   return content;
 }
+
+function initPageGetStarted() {
+  replacePlaceholdersForElement('.cover-main');
+}

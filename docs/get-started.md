@@ -30,6 +30,16 @@ Import downloaded files (`tooltip.min.css` and `tooltip.min.js`) into your proje
 <script src="path/to/tooltip.min.js">
 ```
 
+## Example
+
+<span data-tooltip="Sample tooltip" data-tooltip-position="right">Hover here</span>
+
+```html
+<span data-tooltip="Sample tooltip" data-tooltip-position="right">Hover here</span>
+```
+
+Refer [attributes](attributes.md) for available attribute options.
+
 <script>
   initPageGetStarted();
 </script>

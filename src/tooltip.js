@@ -1,14 +1,15 @@
 /**
- * available data attributes (data-tooltip-*)
- * tooltip - required - Text to show
- * position - [auto] - Position of tooltip (top, bottom, left, right, auto)
- * margin - [4] - Space between tooltip and its activator (in pixel)
- * enterDelay - [0] - Delay time before showing tooltip (in milliseconds)
- * exitDelay - [0] - Delay time before hiding tooltip (in milliseconds)
- * showDuration - [300] - Transition duration for show animation (in milliseconds)
- * hideDuration - [200] - Transition duration for hide animation (in milliseconds)
- * transitionDistance - [10] - Distance to translate on show/hide animation (in milliseconds)
- * zIndex - [1] - CSS z-index value for tooltip
+ * Available data attributes (data-tooltip-*)
+ * @property {string} tooltip - Text to show (data-tooltip="")
+ * @property {string} [position=auto] - Position of tooltip (top, bottom, left, right, auto)
+ * @property {number} [margin=4] - Space between tooltip and its activator (in pixel)
+ * @property {number} [enterDelay=0] - Delay time before showing tooltip (in milliseconds)
+ * @property {number} [exitDelay=0] - Delay time before hiding tooltip (in milliseconds)
+ * @property {number} [showDuration=300] - Transition duration for show animation (in milliseconds)
+ * @property {number} [hideDuration=200] - Transition duration for hide animation (in milliseconds)
+ * @property {number} [transitionDistance=10] - Distance to translate on show/hide animation (in pixel)
+ * @property {number} [zIndex=1] - CSS z-index value for tooltip
+ * @property {boolean} [ellipsisOnly=false] - Show the tooltip only if element text is partially hidden with ellipsis
  */
 (function () {
   if (window.tooltipComponentInitiated) {
@@ -161,18 +162,19 @@
     options = {
       tooltip: dataset.tooltip,
       position: dataset.tooltipPosition || 'auto',
-      zIndex: parseFloat(dataset.tooltipZindex) || 1,
+      zIndex: parseFloat(dataset.tooltipZIndex) || 1,
       enterDelay: parseFloat(dataset.tooltipEnterDelay) || 0,
       exitDelay: parseFloat(dataset.tooltipExitDelay) || 0,
       margin: parseFloat(dataset.tooltipMargin) || 4,
       showDuration: parseFloat(dataset.tooltipShowDuration) || 300,
       hideDuration: parseFloat(dataset.tooltipHideDuration) || 200,
       transitionDistance: parseFloat(dataset.tooltipTransitionDistance) || 10,
+      ellipsisOnly: convertToBoolean(dataset.tooltipEllipsisOnly),
     };
 
     options.position = options.position.toLowerCase();
 
-    if (!options.tooltip) {
+    if (!options.tooltip || isTooltipDisabled()) {
       return;
     }
 
@@ -224,6 +226,10 @@
     if ($tooltip) {
       $tooltip.remove();
     }
+  }
+
+  function isTooltipDisabled() {
+    return options.ellipsisOnly && !hasEllipsis($currentEle);
   }
 
   /** helper methods - start */
@@ -297,6 +303,18 @@
       horizontal,
       vertical,
     };
+  }
+
+  function hasEllipsis($ele) {
+    if (!$ele) {
+      return false;
+    }
+
+    return $ele.scrollWidth > $ele.offsetWidth;
+  }
+
+  function convertToBoolean(value) {
+    return (value === true || value === 'true') ? true : false;
   }
   /** helper methods - end */
 })();

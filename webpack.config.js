@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 
@@ -26,17 +25,22 @@ module.exports = (env, options) => {
         filename: 'tooltip.min.css',
       }),
 
-      new CleanWebpackPlugin({
-        protectWebpackAssets: false,
-        cleanAfterEveryBuildPatterns: ['main.min.js', 'styles.min.js'],
-      }),
-
       new webpack.BannerPlugin(banner),
 
       new FileManagerPlugin({
         events: {
+          onStart: {
+            delete: [
+              'dist',
+            ]
+          },
           onEnd: {
-            copy: [{ source: 'dist', destination: 'docs/assets' }],
+            delete: [
+              'dist/styles.min.js',
+            ],
+            copy: [
+              { source: 'dist', destination: 'docs/assets' },
+            ],
           },
         },
       }),

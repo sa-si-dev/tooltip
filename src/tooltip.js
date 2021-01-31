@@ -2,6 +2,7 @@
  * Available data attributes (data-tooltip-*)
  * @property {string} tooltip - Text to show (data-tooltip="")
  * @property {string} [position=auto] - Position of tooltip (top, bottom, left, right, auto)
+ * @property {string} [fontSize=14px] - Text font size
  * @property {number} [margin=4] - Space between tooltip and its activator (in pixel)
  * @property {number} [enterDelay=0] - Delay time before showing tooltip (in milliseconds)
  * @property {number} [exitDelay=0] - Delay time before hiding tooltip (in milliseconds)
@@ -80,6 +81,7 @@
 
     $tooltip = document.querySelector('.tooltip-box');
     setStyle($tooltip, 'zIndex', options.zIndex);
+    setStyle($tooltip, 'fontSize', options.fontSize);
   }
 
   function setPosition() {
@@ -165,6 +167,7 @@
       zIndex: parseFloat(dataset.tooltipZIndex) || 1,
       enterDelay: parseFloat(dataset.tooltipEnterDelay) || 0,
       exitDelay: parseFloat(dataset.tooltipExitDelay) || 0,
+      fontSize: dataset.tooltipFontSize || '14px',
       margin: parseFloat(dataset.tooltipMargin) || 4,
       showDuration: parseFloat(dataset.tooltipShowDuration) || 300,
       hideDuration: parseFloat(dataset.tooltipHideDuration) || 200,

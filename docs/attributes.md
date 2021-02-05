@@ -13,3 +13,5 @@
 | data-tooltip-transition-distance | Number | 10 | Distance to translate on show/hide animation (in pixel) |
 | data-tooltip-z-index | Number | 1 | CSS z-index value for tooltip |
 | data-tooltip-ellipsis-only | Boolean | false | Show the tooltip only if element text is partially hidden with ellipsis |
+| data-tooltip-allow-html | Boolean | false | Allow html elements in the tooltip text |
+| data-tooltip-alignment | String | left | CSS text-align value |

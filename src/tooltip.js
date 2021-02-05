@@ -11,6 +11,8 @@
  * @property {number} [transitionDistance=10] - Distance to translate on show/hide animation (in pixel)
  * @property {number} [zIndex=1] - CSS z-index value for tooltip
  * @property {boolean} [ellipsisOnly=false] - Show the tooltip only if element text is partially hidden with ellipsis
+ * @property {boolean} [allowHtml=false] - Allow html elements in the tooltip text
+ * @property {string} [alignment=left] - CSS text-align value
  */
 (function () {
   if (window.tooltipComponentInitiated) {
@@ -75,13 +77,19 @@
   /** event methods - end */
 
   function renderTooltip() {
-    let html = `<div class="tooltip-box">${options.tooltip}</div>`;
-
-    $body.insertAdjacentHTML('afterend', html);
+    $body.insertAdjacentHTML('beforeend', '<div class="tooltip-box"></div>');
 
     $tooltip = document.querySelector('.tooltip-box');
+
+    if (options.allowHtml) {
+      $tooltip.innerHTML = options.tooltip;
+    } else {
+      $tooltip.innerText = options.tooltip;
+    }
+
     setStyle($tooltip, 'zIndex', options.zIndex);
     setStyle($tooltip, 'fontSize', options.fontSize);
+    setStyle($tooltip, 'textAlign', options.alignment);
   }
 
   function setPosition() {
@@ -173,6 +181,8 @@
       hideDuration: parseFloat(dataset.tooltipHideDuration) || 200,
       transitionDistance: parseFloat(dataset.tooltipTransitionDistance) || 10,
       ellipsisOnly: convertToBoolean(dataset.tooltipEllipsisOnly),
+      allowHtml: convertToBoolean(dataset.tooltipAllowHtml),
+      alignment: dataset.tooltipAlignment || 'left',
     };
 
     options.position = options.position.toLowerCase();

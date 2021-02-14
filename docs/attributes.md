@@ -15,3 +15,4 @@
 | data-tooltip-ellipsis-only | Boolean | false | Show the tooltip only if element text is partially hidden with ellipsis |
 | data-tooltip-allow-html | Boolean | false | Allow html elements in the tooltip text |
 | data-tooltip-alignment | String | left | CSS text-align value |
+| data-tooltip-max-width | String | 300px | CSS max-width for tootltip box |

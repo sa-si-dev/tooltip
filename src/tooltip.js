@@ -13,6 +13,7 @@
  * @property {boolean} [ellipsisOnly=false] - Show the tooltip only if element text is partially hidden with ellipsis
  * @property {boolean} [allowHtml=false] - Allow html elements in the tooltip text
  * @property {string} [alignment=left] - CSS text-align value
+ * @property {string} [maxWidth=300px] - CSS max-width for tootltip box
  */
 (function () {
   if (window.tooltipComponentInitiated) {
@@ -90,6 +91,7 @@
     setStyle($tooltip, 'zIndex', options.zIndex);
     setStyle($tooltip, 'fontSize', options.fontSize);
     setStyle($tooltip, 'textAlign', options.alignment);
+    setStyle($tooltip, 'maxWidth', options.maxWidth);
   }
 
   function setPosition() {
@@ -183,6 +185,7 @@
       ellipsisOnly: convertToBoolean(dataset.tooltipEllipsisOnly),
       allowHtml: convertToBoolean(dataset.tooltipAllowHtml),
       alignment: dataset.tooltipAlignment || 'left',
+      maxWidth: dataset.tooltipMaxWidth || '300px',
     };
 
     options.position = options.position.toLowerCase();

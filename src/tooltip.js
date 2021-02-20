@@ -14,6 +14,7 @@
  * @property {boolean} [allowHtml=false] - Allow html elements in the tooltip text
  * @property {string} [alignment=left] - CSS text-align value
  * @property {string} [maxWidth=300px] - CSS max-width for tootltip box
+ * @property {boolean} [hideOnClick=true] - Hide tooltip on clicking the element
  */
 (function () {
   if (window.tooltipComponentInitiated) {
@@ -37,6 +38,7 @@
     document.addEventListener('mouseover', onMouseOver);
     document.addEventListener('mouseout', onMouseOut);
     document.addEventListener('touchmove', onTouchMove);
+    document.addEventListener('click', onClick);
   }
 
   function onMouseOver(e) {
@@ -74,6 +76,12 @@
 
   function onTouchMove() {
     hideTooltip();
+  }
+
+  function onClick() {
+    if (options.hideOnClick) {
+      hideTooltip();
+    }
   }
   /** event methods - end */
 
@@ -184,6 +192,7 @@
       transitionDistance: parseFloat(dataset.tooltipTransitionDistance) || 10,
       ellipsisOnly: convertToBoolean(dataset.tooltipEllipsisOnly),
       allowHtml: convertToBoolean(dataset.tooltipAllowHtml),
+      hideOnClick: convertToBoolean(dataset.tooltipHideOnClick, true),
       alignment: dataset.tooltipAlignment || 'left',
       maxWidth: dataset.tooltipMaxWidth || '300px',
     };
@@ -329,8 +338,16 @@
     return $ele.scrollWidth > $ele.offsetWidth;
   }
 
-  function convertToBoolean(value) {
-    return (value === true || value === 'true') ? true : false;
+  function convertToBoolean(value, defaultValue = false) {
+    if (value === true || value === 'true') {
+      value = true;
+    } else if (value === false || value === 'false') {
+      value = false;
+    } else {
+      value = defaultValue;
+    }
+
+    return value;
   }
   /** helper methods - end */
 })();

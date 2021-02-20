@@ -16,3 +16,4 @@
 | data-tooltip-allow-html | Boolean | false | Allow html elements in the tooltip text |
 | data-tooltip-alignment | String | left | CSS text-align value |
 | data-tooltip-max-width | String | 300px | CSS max-width for tootltip box |
+| data-tooltip-hide-on-click | Boolean | true | Hide tooltip on clicking the element |

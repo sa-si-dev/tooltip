@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 
-const banner = `Tooltip v1.0.5
+const banner = `Tooltip v1.0.6
 https://sa-si-dev.github.io/tooltip
 Licensed under MIT (https://github.com/sa-si-dev/tooltip/blob/master/LICENSE)`;
 

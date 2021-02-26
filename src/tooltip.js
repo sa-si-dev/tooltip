@@ -23,7 +23,7 @@
     window.tooltipComponentInitiated = true;
   }
 
-  let $body = document.querySelector('body');
+  let $body;
   let $tooltip;
   let $currentEle;
   let options = {};
@@ -31,7 +31,13 @@
   let exitDelayTimeout;
   let hideDurationTimeout;
 
-  addEvents();
+  window.addEventListener('load', initTooltip);
+  
+  function initTooltip() {
+    $body = document.querySelector('body');
+
+    addEvents();
+  }
 
   /** event methods - start */
   function addEvents() {

@@ -1,3 +1,6 @@
+import { Utils, DomUtils } from './utils';
+import { Popper } from './popper';
+
 /**
  * Available data attributes (data-tooltip-*)
  * @property {string} tooltip - Text to show (data-tooltip="")
@@ -15,6 +18,8 @@
  * @property {string} [alignment=left] - CSS text-align value
  * @property {string} [maxWidth=300px] - CSS max-width for tootltip box
  * @property {boolean} [hideOnClick=true] - Hide tooltip on clicking the element
+ * @property {boolean} [hideArrowIcon=false] - Hide arrow icon in the tooltip
+ * @property {string} [additionalClasses] - Additional classes for tooltip which could be used to customize tooltip in CSS
  */
 (function () {
   if (window.tooltipComponentInitiated) {
@@ -24,15 +29,14 @@
   }
 
   let $body;
-  let $tooltip;
-  let $currentEle;
+  let $popperEle;
+  let $triggerEle;
+  let $arrowEle;
   let options = {};
-  let enterDelayTimeout;
-  let exitDelayTimeout;
-  let hideDurationTimeout;
+  let popper;
 
   window.addEventListener('load', initTooltip);
-  
+
   function initTooltip() {
     $body = document.querySelector('body');
 
@@ -48,7 +52,7 @@
   }
 
   function onMouseOver(e) {
-    if ($currentEle) {
+    if ($triggerEle) {
       return;
     }
 
@@ -58,19 +62,20 @@
       return;
     }
 
-    $currentEle = target;
+    $triggerEle = target;
+
     showTooltip();
   }
 
   function onMouseOut(e) {
-    if (!$currentEle) {
+    if (!$triggerEle) {
       return;
     }
 
     let target = e.relatedTarget;
 
     while (target) {
-      if (target === $currentEle) {
+      if (target === $triggerEle) {
         return;
       }
 
@@ -91,100 +96,14 @@
   }
   /** event methods - end */
 
-  function renderTooltip() {
-    $body.insertAdjacentHTML('beforeend', '<div class="tooltip-box"></div>');
-
-    $tooltip = document.querySelector('.tooltip-box');
-
-    if (options.allowHtml) {
-      $tooltip.innerHTML = options.tooltip;
-    } else {
-      $tooltip.innerText = options.tooltip;
-    }
-
-    setStyle($tooltip, 'zIndex', options.zIndex);
-    setStyle($tooltip, 'fontSize', options.fontSize);
-    setStyle($tooltip, 'textAlign', options.alignment);
-    setStyle($tooltip, 'maxWidth', options.maxWidth);
-  }
-
-  function setPosition() {
-    let viewportWidth = window.innerWidth;
-    let currentEleCoords = getCoords($currentEle);
-    let tooltipCoords = getCoords($tooltip);
-    let left = currentEleCoords.left;
-    let top = currentEleCoords.top;
-    let tooltipWidth = tooltipCoords.width;
-    let tooltipHeight = tooltipCoords.height;
-    let parentWidth = currentEleCoords.width;
-    let parentHeight = currentEleCoords.height;
-    let position = options.position;
-    let widthCenter = parentWidth / 2 - tooltipWidth / 2;
-    let heightCenter = parentHeight / 2 - tooltipHeight / 2;
-    let margin = options.margin;
-    let transitionDistance = options.transitionDistance;
-    let fromTop;
-    let fromLeft;
-
-    if (position === 'auto') {
-      let moreVisibleSides = getMoreVisibleSides($currentEle);
-      position = moreVisibleSides.vertical;
-    }
-
-    if (position === 'top') {
-      top = top - tooltipHeight - margin;
-      left = left + widthCenter;
-    } else if (position === 'right') {
-      top = top + heightCenter;
-      left = left + parentWidth + margin;
-    } else if (position === 'left') {
-      top = top + heightCenter;
-      left = left - tooltipWidth - margin;
-    } else {
-      top = top + parentHeight + margin;
-      left = left + widthCenter;
-    }
-
-    /* if tooltip is hiding in left edge */
-    if (left < 0) {
-      left = 0;
-    } else if (left + tooltipWidth > viewportWidth) {
-      /* if tooltip is hiding in right edge */
-      left = viewportWidth - tooltipWidth;
-    }
-
-    if (position === 'top') {
-      fromTop = top + transitionDistance;
-      fromLeft = left;
-    } else if (position === 'right') {
-      fromTop = top;
-      fromLeft = left - transitionDistance;
-    } else if (position === 'left') {
-      fromTop = top;
-      fromLeft = left + transitionDistance;
-    } else {
-      fromTop = top - transitionDistance;
-      fromLeft = left;
-    }
-
-    let transformText = `translate3d(${fromLeft}px, ${fromTop}px, 0)`;
-
-    setStyle($tooltip, 'transform', transformText);
-    setData($tooltip, 'fromLeft', fromLeft);
-    setData($tooltip, 'fromTop', fromTop);
-    setData($tooltip, 'top', top);
-    setData($tooltip, 'left', left);
-
-    /** calling below method to force redraw */
-    getCoords($tooltip);
-  }
-
   function showTooltip() {
-    if (!$currentEle) {
+    if (!$triggerEle) {
       return;
     }
 
-    let dataset = $currentEle.dataset;
+    let convertToBoolean = Utils.convertToBoolean;
+    let dataset = $triggerEle.dataset;
+
     options = {
       tooltip: dataset.tooltip,
       position: dataset.tooltipPosition || 'auto',
@@ -199,11 +118,11 @@
       ellipsisOnly: convertToBoolean(dataset.tooltipEllipsisOnly),
       allowHtml: convertToBoolean(dataset.tooltipAllowHtml),
       hideOnClick: convertToBoolean(dataset.tooltipHideOnClick, true),
+      hideArrowIcon: convertToBoolean(dataset.tooltipHideArrowIcon),
       alignment: dataset.tooltipAlignment || 'left',
       maxWidth: dataset.tooltipMaxWidth || '300px',
+      additionalClasses: dataset.tooltipAdditionalClasses,
     };
-
-    options.position = options.position.toLowerCase();
 
     if (!options.tooltip || isTooltipDisabled()) {
       return;
@@ -211,149 +130,86 @@
 
     removeTooltip();
     renderTooltip();
-    setPosition();
-    clearTimeout(exitDelayTimeout);
-    clearTimeout(hideDurationTimeout);
+    initPopper();
+  }
 
-    enterDelayTimeout = setTimeout(() => {
-      let left = getData($tooltip, 'left');
-      let top = getData($tooltip, 'top');
-      let transformText = `translate3d(${left}px, ${top}px, 0)`;
+  function renderTooltip() {
+    let classNames = 'tooltip-comp';
 
-      setStyle($tooltip, 'transitionDuration', options.showDuration + 'ms');
-      setStyle($tooltip, 'transform', transformText);
-      setStyle($tooltip, 'opacity', 1);
-    }, options.enterDelay);
+    if (options.hideArrowIcon) {
+      classNames += ' hide-arrow-icon';
+    }
+
+    if (options.additionalClasses) {
+      classNames += ' ' + options.additionalClasses;
+    }
+
+    let html = `<div class="${classNames}">
+        <i class="tooltip-comp-arrow"></i>
+        <div class="tooltip-comp-content"></div>
+      </div>`;
+
+    $body.insertAdjacentHTML('beforeend', html);
+
+    let setStyle = DomUtils.setStyle;
+    $popperEle = document.querySelector('.tooltip-comp');
+    $arrowEle = $popperEle.querySelector('.tooltip-comp-arrow');
+    let $popperContent = $popperEle.querySelector('.tooltip-comp-content');
+
+    if (options.allowHtml) {
+      $popperContent.innerHTML = options.tooltip;
+    } else {
+      $popperContent.innerText = options.tooltip;
+    }
+
+    setStyle($popperEle, 'zIndex', options.zIndex);
+    setStyle($popperEle, 'fontSize', options.fontSize);
+    setStyle($popperEle, 'textAlign', options.alignment);
+    setStyle($popperEle, 'maxWidth', options.maxWidth);
   }
 
   function hideTooltip() {
-    if (!$tooltip && !$currentEle) {
+    if (!$popperEle && !$triggerEle) {
       return;
     }
 
-    clearTimeout(enterDelayTimeout);
+    hidePopper();
 
-    exitDelayTimeout = setTimeout(() => {
-      if ($tooltip) {
-        let left = getData($tooltip, 'fromLeft');
-        let top = getData($tooltip, 'fromTop');
-        let transformText = `translate3d(${left}px, ${top}px, 0)`;
-        let hideDuration = options.hideDuration;
-
-        setStyle($tooltip, 'transitionDuration', hideDuration + 'ms');
-        setStyle($tooltip, 'transform', transformText);
-        setStyle($tooltip, 'opacity', 0);
-
-        hideDurationTimeout = setTimeout(() => {
-          removeTooltip();
-        }, hideDuration);
-      }
-    }, options.exitDelay);
-
-    $currentEle = null;
+    $triggerEle = null;
   }
 
   function removeTooltip() {
-    if ($tooltip) {
-      $tooltip.remove();
+    if ($popperEle) {
+      $popperEle.remove();
     }
   }
 
   function isTooltipDisabled() {
-    return options.ellipsisOnly && !hasEllipsis($currentEle);
+    return options.ellipsisOnly && !DomUtils.hasEllipsis($triggerEle);
   }
 
-  /** helper methods - start */
-  function setStyle($ele, name, value) {
-    if (!$ele) {
-      return;
-    }
-
-    $ele.style[name] = value;
-  }
-
-  function setData($ele, name, value) {
-    if (!$ele) {
-      return;
-    }
-
-    $ele.dataset[name] = value;
-  }
-
-  function getData($ele, name, type) {
-    let value = $ele ? $ele.dataset[name] : '';
-
-    if (type === 'number') {
-      value = parseFloat(value) || 0;
-    } else {
-      if (value === 'true') {
-        value = true;
-      } else if (value === 'false') {
-        value = false;
-      }
-    }
-
-    return value;
-  }
-
-  function getCoords($ele) {
-    if (!$ele) {
-      return;
-    }
-
-    let box = $ele.getBoundingClientRect();
-    let pageX = window.pageXOffset;
-    let pageY = window.pageYOffset;
-
-    return {
-      width: box.width,
-      height: box.height,
-      top: box.top + pageY,
-      right: box.right + pageX,
-      bottom: box.bottom + pageY,
-      left: box.left + pageX,
+  function initPopper() {
+    let data = {
+      $popperEle,
+      $triggerEle,
+      $arrowEle,
+      position: options.position,
+      margin: options.margin,
+      enterDelay: options.enterDelay,
+      exitDelay: options.exitDelay,
+      showDuration: options.showDuration,
+      hideDuration: options.hideDuration,
+      transitionDistance: options.transitionDistance,
+      zIndex: options.zIndex,
     };
+
+    popper = new Popper(data);
+    popper.show();
   }
 
-  function getMoreVisibleSides($ele) {
-    if (!$ele) {
-      return {};
+  function hidePopper() {
+    if (popper) {
+      popper.hide();
     }
-
-    let box = $ele.getBoundingClientRect();
-    let availableWidth = window.innerWidth;
-    let availableHeight = window.innerHeight;
-    let leftArea = box.left;
-    let topArea = box.top;
-    let rightArea = availableWidth - leftArea - box.width;
-    let bottomArea = availableHeight - topArea - box.height;
-    let horizontal = leftArea > rightArea ? 'left' : 'right';
-    let vertical = topArea > bottomArea ? 'top' : 'bottom';
-
-    return {
-      horizontal,
-      vertical,
-    };
   }
-
-  function hasEllipsis($ele) {
-    if (!$ele) {
-      return false;
-    }
-
-    return $ele.scrollWidth > $ele.offsetWidth;
-  }
-
-  function convertToBoolean(value, defaultValue = false) {
-    if (value === true || value === 'true') {
-      value = true;
-    } else if (value === false || value === 'false') {
-      value = false;
-    } else {
-      value = defaultValue;
-    }
-
-    return value;
-  }
-  /** helper methods - end */
 })();

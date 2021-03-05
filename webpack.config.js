@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 
-const banner = `Tooltip v1.0.6
+const banner = `Tooltip v1.0.7
 https://sa-si-dev.github.io/tooltip
 Licensed under MIT (https://github.com/sa-si-dev/tooltip/blob/master/LICENSE)`;
 
@@ -30,17 +30,11 @@ module.exports = (env, options) => {
       new FileManagerPlugin({
         events: {
           onStart: {
-            delete: [
-              'dist',
-            ]
+            delete: ['dist'],
           },
           onEnd: {
-            delete: [
-              'dist/styles.min.js',
-            ],
-            copy: [
-              { source: 'dist', destination: 'docs/assets' },
-            ],
+            delete: ['dist/styles.min.js'],
+            copy: [{ source: 'dist', destination: 'docs/assets' }],
           },
         },
       }),

@@ -1,9 +1,9 @@
-.tooltip-box {
+.tooltip-comp {
   font-family: sans-serif;
   font-size: 14px;
   line-height: 20px;
-  color: #fff;
-  background: #212121;
+  color: $fontColor;
+  background: $primaryBg;
   position: absolute;
   top: 0;
   left: 0;
@@ -11,6 +11,62 @@
   padding: 5px 10px;
   opacity: 0;
   pointer-events: none;
-  word-wrap: break-word;
+  word-break: break-word;
   text-align: left;
+  border-radius: 2px;
+}
+
+.tooltip-comp-arrow {
+  position: absolute;
+  border: $arrowSize solid transparent;
+  z-index: 1;
+}
+
+.tooltip-comp-content {
+  position: relative;
+  z-index: 2;
+}
+
+.tooltip-comp {
+  &.hide-arrow-icon {
+    .tooltip-comp-arrow {
+      display: none;
+    }
+  }
+
+  &.position-bottom {
+    .tooltip-comp-arrow {
+      margin-left: -$arrowSize;
+      left: 0;
+      border-bottom-color: $primaryBg;
+      top: -$arrowSize * 2;
+    }
+  }
+
+  &.position-top {
+    .tooltip-comp-arrow {
+      margin-left: -$arrowSize;
+      left: 0;
+      border-top-color: $primaryBg;
+      bottom: -$arrowSize * 2;
+    }
+  }
+
+  &.position-right {
+    .tooltip-comp-arrow {
+      margin-top: -$arrowSize;
+      top: 0;
+      border-right-color: $primaryBg;
+      left: -$arrowSize * 2;
+    }
+  }
+
+  &.position-left {
+    .tooltip-comp-arrow {
+      margin-top: -$arrowSize;
+      top: 0;
+      border-left-color: $primaryBg;
+      right: -$arrowSize * 2;
+    }
+  }
 }

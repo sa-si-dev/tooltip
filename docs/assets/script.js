@@ -40,7 +40,7 @@ function replacePlaceholdersForElement(selector) {
 }
 
 function replacePlaceholders(content) {
-  Object.keys(config).forEach(function(placeholder) {
+  Object.keys(config).forEach(function (placeholder) {
     var value = config[placeholder];
 
     if (value) {

@@ -17,3 +17,5 @@
 | data-tooltip-alignment | String | left | CSS text-align value |
 | data-tooltip-max-width | String | 300px | CSS max-width for tootltip box |
 | data-tooltip-hide-on-click | Boolean | true | Hide tooltip on clicking the element |
+| data-tooltip-hide-arrow-icon | Boolean | false | Hide arrow icon in the tooltip |
+| data-tooltip-additional-classes | String | | Additional classes for tooltip which could be used to customize tooltip in CSS |

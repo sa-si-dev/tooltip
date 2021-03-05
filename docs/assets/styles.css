@@ -16,7 +16,7 @@ body {
   left: 200px;
 }
 
-section.cover .cover-main>p:last-child a:last-child:hover {
+section.cover .cover-main > p:last-child a:last-child:hover {
   color: #fff;
 }
 
@@ -36,10 +36,11 @@ section.cover .cover-main>p:last-child a:last-child:hover {
 }
 
 section.cover {
-  background: linear-gradient(to left bottom, hsl(71, 100%, 85%) 0%,hsl(252, 100%, 85%) 100%) !important;
+  background: linear-gradient(to left bottom, hsl(71, 100%, 85%) 0%, hsl(252, 100%, 85%) 100%) !important;
 }
 
-.markdown-section td, .markdown-section th {
+.markdown-section td,
+.markdown-section th {
   padding: 10px 15px;
   line-height: 30px;
 }
@@ -86,17 +87,17 @@ section.cover {
 
 .btn {
   border-radius: 2rem;
-  border: 1px solid var(--theme-color,#42b983);
+  border: 1px solid var(--theme-color, #42b983);
   box-sizing: border-box;
-  color: var(--theme-color,#42b983);
+  color: var(--theme-color, #42b983);
   display: inline-flex;
   font-size: 1.05rem;
-  letter-spacing: .1rem;
-  margin: .5rem 1rem;
-  padding: .75em 2rem;
+  letter-spacing: 0.1rem;
+  margin: 0.5rem 1rem;
+  padding: 0.75em 2rem;
   text-decoration: none;
-  transition: all .15s ease;
-  background-color: var(--theme-color,#42b983);
+  transition: all 0.15s ease;
+  background-color: var(--theme-color, #42b983);
   color: #fff;
 }
 

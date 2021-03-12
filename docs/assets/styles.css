@@ -86,6 +86,9 @@ section.cover {
 /* theme customization - end */
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 2rem;
   border: 1px solid var(--theme-color, #42b983);
   box-sizing: border-box;
@@ -101,10 +104,21 @@ section.cover {
   color: #fff;
 }
 
+.btn-v-long {
+  width: 200px;
+}
+
+.btn-h-long {
+  height: 100px;
+}
+
 .get-started-example {
   display: flex;
   justify-content: space-between;
-  max-width: 600px;
   margin: 30px auto 0;
   flex-wrap: wrap;
+}
+
+.examples-row {
+  margin-bottom: 30px;
 }

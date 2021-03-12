@@ -2,6 +2,11 @@ import { DomUtils } from './utils';
 
 const allPositions = ['top', 'bottom', 'left', 'right'];
 const allPositionsClass = allPositions.map((d) => `position-${d}`);
+const arrowRotateMapping = {
+  top: 'rotate(180deg)',
+  left: 'rotate(90deg)',
+  right: 'rotate(-90deg)',
+};
 
 export class Popper {
   /**
@@ -10,13 +15,14 @@ export class Popper {
    * @property {element} $triggerEle - Trigger element
    * @property {element} $arrowEle - Arrow icon in the popper
    * @property {string} [position=auto] - Position of popper (top, bottom, left, right, auto)
-   * @property {number} [margin=4] - Space between popper and its activator (in pixel)
+   * @property {number} [margin=8] - Space between popper and its activator (in pixel)
    * @property {number} [enterDelay=0] - Delay time before showing popper (in milliseconds)
    * @property {number} [exitDelay=0] - Delay time before hiding popper (in milliseconds)
    * @property {number} [showDuration=300] - Transition duration for show animation (in milliseconds)
    * @property {number} [hideDuration=200] - Transition duration for hide animation (in milliseconds)
    * @property {number} [transitionDistance=10] - Distance to translate on show/hide animation (in pixel)
    * @property {number} [zIndex=1] - CSS z-index value for popper
+   * @property {function} [afterShow] - Callback function to trigger after show
    * @property {function} [afterHide] - Callback function to trigger after hide
    */
   constructor(options) {
@@ -44,11 +50,11 @@ export class Popper {
   /** set methods - start */
   setProps(options) {
     options = this.setDefaultProps(options);
+    let position = options.position.toLowerCase();
 
     this.$popperEle = options.$popperEle;
     this.$triggerEle = options.$triggerEle;
     this.$arrowEle = options.$arrowEle;
-    this.position = options.position.toLowerCase();
     this.margin = parseFloat(options.margin);
     this.enterDelay = parseFloat(options.enterDelay);
     this.exitDelay = parseFloat(options.exitDelay);
@@ -56,19 +62,24 @@ export class Popper {
     this.hideDuration = parseFloat(options.hideDuration);
     this.transitionDistance = parseFloat(options.transitionDistance);
     this.zIndex = parseFloat(options.zIndex);
-    this.afterHide = options.afterHide;
+    this.afterShowCallback = options.afterShow;
+    this.afterHideCallback = options.afterHide;
 
     this.hasArrow = this.$arrowEle ? true : false;
 
-    if (this.hasArrow) {
-      this.arrowWidthHalf = this.$arrowEle.offsetWidth / 2;
+    if (position.indexOf(' ') !== -1) {
+      let positionArray = position.split(' ');
+      this.position = positionArray[0];
+      this.secondaryPosition = positionArray[1];
+    } else {
+      this.position = position;
     }
   }
 
   setDefaultProps(options) {
     let defaultOptions = {
       position: 'auto',
-      margin: 4,
+      margin: 8,
       enterDelay: 0,
       exitDelay: 0,
       showDuration: 300,
@@ -91,13 +102,16 @@ export class Popper {
     let popperEleTop = popperEleCoords.top;
     let triggerEleLeft = triggerEleCoords.left;
     let triggerEleTop = triggerEleCoords.top;
-    let left = triggerEleLeft - popperEleLeft;
-    let top = triggerEleTop - popperEleTop;
+    let topDiff = triggerEleTop - popperEleTop;
+    let leftDiff = triggerEleLeft - popperEleLeft;
+    let left = leftDiff;
+    let top = topDiff;
     let popperEleWidth = popperEleCoords.width;
     let popperEleHeight = popperEleCoords.height;
     let triggerEleWidth = triggerEleCoords.width;
     let triggerEleHeight = triggerEleCoords.height;
     let position = this.position;
+    let secondaryPosition = this.secondaryPosition;
     let widthCenter = triggerEleWidth / 2 - popperEleWidth / 2;
     let heightCenter = triggerEleHeight / 2 - popperEleHeight / 2;
     let margin = this.margin;
@@ -106,6 +120,10 @@ export class Popper {
     let fromLeft;
     let scrollTop = window.scrollY;
     let scrollLeft = window.scrollX;
+    let topEdge = scrollTop - popperEleTop;
+    let bottomEdge = viewportHeight + topEdge;
+    let leftEdge = scrollLeft - popperEleLeft;
+    let rightEdge = viewportWidth + leftEdge;
     let inversePosition;
 
     /** find the position which has more space */
@@ -137,35 +155,48 @@ export class Popper {
     top = positionValue.top;
     left = positionValue.left;
 
+    /** setting secondary position value */
+    if (secondaryPosition) {
+      if (secondaryPosition === 'top') {
+        top = topDiff;
+      } else if (secondaryPosition === 'bottom') {
+        top = topDiff + triggerEleHeight - popperEleHeight;
+      } else if (secondaryPosition === 'left') {
+        left = leftDiff;
+      } else if (secondaryPosition === 'right') {
+        left = leftDiff + triggerEleWidth - popperEleWidth;
+      }
+    }
+
     /* if popperEle is hiding in left edge */
-    if (left < scrollLeft) {
+    if (left < leftEdge) {
       if (position === 'left') {
         inversePosition = 'right';
       } else {
-        left = scrollLeft;
+        left = leftEdge;
       }
-    } else if (left + popperEleWidth > viewportWidth + scrollLeft) {
+    } else if (left + popperEleWidth > rightEdge) {
       /* if popperEle is hiding in right edge */
       if (position === 'right') {
         inversePosition = 'left';
       } else {
-        left = viewportWidth + scrollLeft - popperEleWidth;
+        left = rightEdge - popperEleWidth;
       }
     }
 
     /* if popperEle is hiding in top edge */
-    if (top < scrollTop) {
+    if (top < topEdge) {
       if (position === 'top') {
         inversePosition = 'bottom';
       } else {
-        top = scrollTop;
+        top = topEdge;
       }
-    } else if (top + popperEleHeight > viewportHeight + scrollTop) {
+    } else if (top + popperEleHeight > bottomEdge) {
       /* if popperEle is hiding in bottom edge */
       if (position === 'bottom') {
         inversePosition = 'top';
       } else {
-        top = viewportHeight + scrollTop - popperEleHeight;
+        top = bottomEdge - popperEleHeight;
       }
     }
 
@@ -208,61 +239,81 @@ export class Popper {
     if (this.hasArrow) {
       let arrowLeft = 0;
       let arrowTop = 0;
-      let arrowWidthHalf = this.arrowWidthHalf;
+      let fullLeft = left + popperEleLeft;
+      let fullTop = top + popperEleTop;
+      let arrowWidthHalf = this.$arrowEle.offsetWidth / 2;
+      let rotateText = arrowRotateMapping[position] || '';
 
       if (position === 'top' || position === 'bottom') {
         let triggerEleWidthCenter = triggerEleWidth / 2 + triggerEleLeft;
-        arrowLeft = triggerEleWidthCenter - left;
+        arrowLeft = triggerEleWidthCenter - fullLeft;
 
         /** if arrow crossed left edge of popper element */
         if (arrowLeft < arrowWidthHalf) {
           arrowLeft = arrowWidthHalf;
-        } else if (arrowLeft > popperEleWidth) {
+        } else if (arrowLeft > popperEleWidth - arrowWidthHalf) {
           /** if arrow crossed right edge of popper element */
           arrowLeft = popperEleWidth - arrowWidthHalf;
         }
       } else if (position === 'left' || position === 'right') {
         let triggerEleHeightCenter = triggerEleHeight / 2 + triggerEleTop;
-        arrowTop = triggerEleHeightCenter - top;
+        arrowTop = triggerEleHeightCenter - fullTop;
 
         /** if arrow crossed top edge of popper element */
         if (arrowTop < arrowWidthHalf) {
           arrowTop = arrowWidthHalf;
-        } else if (arrowTop > popperEleHeight) {
+        } else if (arrowTop > popperEleHeight - arrowWidthHalf) {
           /** if arrow crossed bottom edge of popper element */
           arrowTop = popperEleHeight - arrowWidthHalf;
         }
       }
 
-      DomUtils.setStyle(this.$arrowEle, 'transform', `translate3d(${arrowLeft}px, ${arrowTop}px, 0)`);
+      DomUtils.setStyle(this.$arrowEle, 'transform', `translate3d(${arrowLeft}px, ${arrowTop}px, 0) ${rotateText}`);
     }
 
     DomUtils.hide(this.$popperEle);
   }
+
+  resetPosition() {
+    DomUtils.setStyle(this.$popperEle, 'transform', 'none');
+    this.setPosition();
+  }
   /** set methods - end */
 
-  show() {
+  show(resetPosition) {
     clearTimeout(this.exitDelayTimeout);
     clearTimeout(this.hideDurationTimeout);
+
+    if (resetPosition) {
+      this.resetPosition();
+    }
 
     this.enterDelayTimeout = setTimeout(() => {
       let left = DomUtils.getData(this.$popperEle, 'left');
       let top = DomUtils.getData(this.$popperEle, 'top');
       let transformText = `translate3d(${left}px, ${top}px, 0)`;
+      let showDuration = this.showDuration;
 
       DomUtils.show(this.$popperEle, 'inline-flex');
 
       /** calling below method to force redraw - it would move the popper element to its fromLeft and fromTop position */
       DomUtils.getCoords(this.$popperEle);
 
-      DomUtils.setStyle(this.$popperEle, 'transitionDuration', this.showDuration + 'ms');
+      DomUtils.setStyle(this.$popperEle, 'transitionDuration', showDuration + 'ms');
       DomUtils.setStyle(this.$popperEle, 'transform', transformText);
       DomUtils.setStyle(this.$popperEle, 'opacity', 1);
+
+      this.showDurationTimeout = setTimeout(() => {
+        if (typeof this.afterShowCallback === 'function') {
+          this.afterShowCallback(this);
+        }
+      }, showDuration);
     }, this.enterDelay);
   }
 
   hide() {
     clearTimeout(this.enterDelayTimeout);
+    clearTimeout(this.showDurationTimeout);
 
     this.exitDelayTimeout = setTimeout(() => {
       if (this.$popperEle) {
@@ -278,8 +329,8 @@ export class Popper {
         this.hideDurationTimeout = setTimeout(() => {
           DomUtils.hide(this.$popperEle);
 
-          if (this.afterHide) {
-            this.afterHide(this);
+          if (typeof this.afterHideCallback === 'function') {
+            this.afterHideCallback(this);
           }
         }, hideDuration);
       }

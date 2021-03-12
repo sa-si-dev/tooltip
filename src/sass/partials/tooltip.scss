@@ -18,8 +18,22 @@
 
 .tooltip-comp-arrow {
   position: absolute;
-  border: $arrowSize solid transparent;
   z-index: 1;
+  width: $arrowSize;
+  height: $arrowSize;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: $arrowHalfSize;
+    left: $arrowHalfSize;
+    width: $arrowSize;
+    height: $arrowSize;
+    background-color: $primaryBg;
+    @include prefix(transform-origin, left top);
+    @include prefix(transform, rotate(45deg));
+  }
 }
 
 .tooltip-comp-content {
@@ -36,37 +50,37 @@
 
   &.position-bottom {
     .tooltip-comp-arrow {
-      margin-left: -$arrowSize;
+      margin-left: -$arrowHalfSize;
       left: 0;
       border-bottom-color: $primaryBg;
-      top: -$arrowSize * 2;
+      top: -#{$arrowSize - 1px};
     }
   }
 
   &.position-top {
     .tooltip-comp-arrow {
-      margin-left: -$arrowSize;
+      margin-left: -$arrowHalfSize;
       left: 0;
       border-top-color: $primaryBg;
-      bottom: -$arrowSize * 2;
+      bottom: -#{$arrowSize - 1px};
     }
   }
 
   &.position-right {
     .tooltip-comp-arrow {
-      margin-top: -$arrowSize;
+      margin-top: -$arrowHalfSize;
       top: 0;
       border-right-color: $primaryBg;
-      left: -$arrowSize * 2;
+      left: -#{$arrowSize - 1px};
     }
   }
 
   &.position-left {
     .tooltip-comp-arrow {
-      margin-top: -$arrowSize;
+      margin-top: -$arrowHalfSize;
       top: 0;
       border-left-color: $primaryBg;
-      right: -$arrowSize * 2;
+      right: -#{$arrowSize - 1px};
     }
   }
 }

@@ -6,7 +6,7 @@ import { Popper } from './popper';
  * @property {string} tooltip - Text to show (data-tooltip="")
  * @property {string} [position=auto] - Position of tooltip (top, bottom, left, right, auto)
  * @property {string} [fontSize=14px] - Text font size
- * @property {number} [margin=4] - Space between tooltip and its activator (in pixel)
+ * @property {number} [margin=8] - Space between tooltip and its activator (in pixel)
  * @property {number} [enterDelay=0] - Delay time before showing tooltip (in milliseconds)
  * @property {number} [exitDelay=0] - Delay time before hiding tooltip (in milliseconds)
  * @property {number} [showDuration=300] - Transition duration for show animation (in milliseconds)
@@ -111,7 +111,7 @@ import { Popper } from './popper';
       enterDelay: parseFloat(dataset.tooltipEnterDelay) || 0,
       exitDelay: parseFloat(dataset.tooltipExitDelay) || 0,
       fontSize: dataset.tooltipFontSize || '14px',
-      margin: parseFloat(dataset.tooltipMargin) || 4,
+      margin: parseFloat(dataset.tooltipMargin) || 8,
       showDuration: parseFloat(dataset.tooltipShowDuration) || 300,
       hideDuration: parseFloat(dataset.tooltipHideDuration) || 200,
       transitionDistance: parseFloat(dataset.tooltipTransitionDistance) || 10,

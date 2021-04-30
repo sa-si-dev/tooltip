@@ -6,8 +6,8 @@ export class DomUtils {
 
     className = className.split(' ');
 
-    this.getElements($ele).forEach((_this) => {
-      _this.classList.add(...className);
+    DomUtils.getElements($ele).forEach(($this) => {
+      $this.classList.add(...className);
     });
   }
 
@@ -18,8 +18,8 @@ export class DomUtils {
 
     className = className.split(' ');
 
-    this.getElements($ele).forEach((_this) => {
-      _this.classList.remove(...className);
+    DomUtils.getElements($ele).forEach(($this) => {
+      $this.classList.remove(...className);
     });
   }
 
@@ -36,7 +36,7 @@ export class DomUtils {
       return;
     }
 
-    if ($ele.length === undefined) {
+    if ($ele.forEach === undefined) {
       $ele = [$ele];
     }
 

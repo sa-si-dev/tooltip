@@ -10,6 +10,8 @@ Licensed under MIT (https://github.com/sa-si-dev/tooltip/blob/master/LICENSE)`;
 
 module.exports = (env, options) => {
   const config = {
+    target: 'es5',
+
     entry: {
       styles: './src/styles.js',
       tooltip: './src/tooltip.js',

@@ -34,13 +34,25 @@ import { Popper } from './popper';
   let $arrowEle;
   let options = {};
   let popper;
+  let isInitiated = false;
 
+  initTooltip();
   window.addEventListener('load', initTooltip);
 
   function initTooltip() {
+    if (isInitiated) {
+      return;
+    }
+
     $body = document.querySelector('body');
 
+    if (!$body) {
+      return;
+    }
+
     addEvents();
+
+    isInitiated = true;
   }
 
   /** event methods - start */

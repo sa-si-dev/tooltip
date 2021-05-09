@@ -4,6 +4,8 @@
 
 [Documentation](https://sa-si-dev.github.io/tooltip)
 
+[Changelog](https://github.com/sa-si-dev/tooltip/releases)
+
 ## Commands
 
 | Command | Description |

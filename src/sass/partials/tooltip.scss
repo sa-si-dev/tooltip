@@ -3,7 +3,7 @@
   font-size: 14px;
   line-height: 20px;
   color: $fontColor;
-  background: $primaryBg;
+  background-color: $primaryBg;
   position: absolute;
   top: 0;
   left: 0;
@@ -52,7 +52,6 @@
     .tooltip-comp-arrow {
       margin-left: -$arrowHalfSize;
       left: 0;
-      border-bottom-color: $primaryBg;
       top: -#{$arrowSize - 1px};
     }
   }
@@ -61,7 +60,6 @@
     .tooltip-comp-arrow {
       margin-left: -$arrowHalfSize;
       left: 0;
-      border-top-color: $primaryBg;
       bottom: -#{$arrowSize - 1px};
     }
   }
@@ -70,7 +68,6 @@
     .tooltip-comp-arrow {
       margin-top: -$arrowHalfSize;
       top: 0;
-      border-right-color: $primaryBg;
       left: -#{$arrowSize - 1px};
     }
   }
@@ -79,7 +76,6 @@
     .tooltip-comp-arrow {
       margin-top: -$arrowHalfSize;
       top: 0;
-      border-left-color: $primaryBg;
       right: -#{$arrowSize - 1px};
     }
   }

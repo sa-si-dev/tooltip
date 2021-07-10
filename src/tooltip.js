@@ -7,6 +7,7 @@ import { Popper } from './popper';
  * @property {string} [position=auto] - Position of tooltip (top, bottom, left, right, auto)
  * @property {string} [fontSize=14px] - Text font size
  * @property {number} [margin=8] - Space between tooltip and its activator (in pixel)
+ * @property {number} [offset=5] - Space between tooltip and window edge (in pixel)
  * @property {number} [enterDelay=0] - Delay time before showing tooltip (in milliseconds)
  * @property {number} [exitDelay=0] - Delay time before hiding tooltip (in milliseconds)
  * @property {number} [showDuration=300] - Transition duration for show animation (in milliseconds)
@@ -114,19 +115,21 @@ import { Popper } from './popper';
     }
 
     let convertToBoolean = Utils.convertToBoolean;
+    let convertToFloat = Utils.convertToFloat;
     let dataset = $triggerEle.dataset;
 
     options = {
       tooltip: dataset.tooltip,
       position: dataset.tooltipPosition || 'auto',
-      zIndex: parseFloat(dataset.tooltipZIndex) || 1,
-      enterDelay: parseFloat(dataset.tooltipEnterDelay) || 0,
-      exitDelay: parseFloat(dataset.tooltipExitDelay) || 0,
+      zIndex: convertToFloat(dataset.tooltipZIndex, 1),
+      enterDelay: convertToFloat(dataset.tooltipEnterDelay, 0),
+      exitDelay: convertToFloat(dataset.tooltipExitDelay, 0),
       fontSize: dataset.tooltipFontSize || '14px',
-      margin: parseFloat(dataset.tooltipMargin) || 8,
-      showDuration: parseFloat(dataset.tooltipShowDuration) || 300,
-      hideDuration: parseFloat(dataset.tooltipHideDuration) || 200,
-      transitionDistance: parseFloat(dataset.tooltipTransitionDistance) || 10,
+      margin: convertToFloat(dataset.tooltipMargin, 8),
+      offset: convertToFloat(dataset.tooltipOffset, 5),
+      showDuration: convertToFloat(dataset.tooltipShowDuration, 300),
+      hideDuration: convertToFloat(dataset.tooltipHideDuration, 200),
+      transitionDistance: convertToFloat(dataset.tooltipTransitionDistance, 10),
       ellipsisOnly: convertToBoolean(dataset.tooltipEllipsisOnly),
       allowHtml: convertToBoolean(dataset.tooltipAllowHtml),
       hideOnClick: convertToBoolean(dataset.tooltipHideOnClick, true),
@@ -207,6 +210,7 @@ import { Popper } from './popper';
       $arrowEle,
       position: options.position,
       margin: options.margin,
+      offset: options.offset,
       enterDelay: options.enterDelay,
       exitDelay: options.exitDelay,
       showDuration: options.showDuration,

@@ -10,4 +10,8 @@ export class Utils {
 
     return value;
   }
+
+  static convertToFloat(value, defaultValue = 0) {
+    return value !== undefined ? parseFloat(value) : defaultValue;
+  }
 }

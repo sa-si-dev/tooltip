@@ -130,4 +130,37 @@ export class DomUtils {
   static hide($ele) {
     DomUtils.setStyle($ele, 'display', 'none');
   }
+
+  static getHideableParentOffset($ele) {
+    let $hideableParent = DomUtils.getHideableParent($ele);
+    let x = window.scrollX;
+    let y = window.scrollY;
+
+    if ($hideableParent) {
+      let coords = DomUtils.getAbsoluteCoords($hideableParent);
+      x += coords.left;
+      y += coords.top;
+    }
+
+    return { x, y };
+  }
+
+  /** getting parent element which could hide absolute positioned child */
+  static getHideableParent($ele) {
+    let $hideableParent;
+    let $parent = $ele.parentElement;
+
+    while ($parent) {
+      let overflowValue = getComputedStyle($parent).overflow;
+
+      if (overflowValue.indexOf('scroll') !== -1 || overflowValue.indexOf('auto') !== -1) {
+        $hideableParent = $parent;
+        break;
+      }
+
+      $parent = $parent.parentElement;
+    }
+
+    return $hideableParent;
+  }
 }

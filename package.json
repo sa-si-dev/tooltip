@@ -1,13 +1,14 @@
 {
-  "name": "tooltip",
-  "version": "1.0.0",
+  "name": "tooltip-plugin",
+  "version": "1.0.11",
   "description": "A javascript plugin for tooltip",
   "scripts": {
     "start": "webpack --mode development --watch",
     "build": "webpack --mode production",
     "docs": "docsify serve docs"
   },
-  "author": "",
+  "author": "Sa Si Dev",
+  "keywords": ["javascript", "plugin", "tooltip"],
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.14.0",

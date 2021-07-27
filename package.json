@@ -1,6 +1,6 @@
 {
   "name": "tooltip-plugin",
-  "version": "1.0.11",
+  "version": "1.0.14",
   "description": "A javascript plugin for tooltip",
   "scripts": {
     "start": "webpack --mode development --watch",

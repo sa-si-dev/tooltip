@@ -17,5 +17,5 @@ npm install --save tooltip-plugin
 ```html
 <link rel="stylesheet" href="node_modules/tooltip-plugin/dist/tooltip.min.css">
 
-<script src="node_modules/tooltip-plugin/dist/tooltip.min.js">
+<script src="node_modules/tooltip-plugin/dist/tooltip.min.js"></script>
 ```

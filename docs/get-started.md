@@ -46,6 +46,22 @@ Import downloaded files (`tooltip.min.css` and `tooltip.min.js`) into your proje
 <script src="path/to/tooltip.min.js">
 ```
 
+## Install from NPM
+
+We could install this plugin from NPM and use it
+
+```shell
+npm install --save tooltip-plugin
+```
+
+## Import files from node_modules
+
+```html
+<link rel="stylesheet" href="node_modules/tooltip-plugin/dist/tooltip.min.css">
+
+<script src="node_modules/tooltip-plugin/dist/tooltip.min.js"></script>
+```
+
 ## Example
 
 <span data-tooltip="Sample tooltip" data-tooltip-position="right">Hover here</span>

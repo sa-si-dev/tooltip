@@ -1,5 +1,4 @@
 import { Utils, DomUtils } from './utils';
-import { Popper } from './popper';
 
 /**
  * Available data attributes (data-tooltip-*)
@@ -33,6 +32,7 @@ import { Popper } from './popper';
   let $popperEle;
   let $triggerEle;
   let $arrowEle;
+  let $scrollableElems;
   let options = {};
   let popper;
   let isInitiated = false;
@@ -140,12 +140,14 @@ import { Popper } from './popper';
     };
 
     if (!options.tooltip || isTooltipDisabled()) {
+      hideTooltip();
       return;
     }
 
     removeTooltip();
     renderTooltip();
     initPopper();
+    addScrollEventListeners();
   }
 
   function renderTooltip() {
@@ -184,11 +186,12 @@ import { Popper } from './popper';
   }
 
   function hideTooltip() {
-    if (!$popperEle && !$triggerEle) {
+    if (!isTooltipShown()) {
       return;
     }
 
     hidePopper();
+    removeScrollEventListeners();
 
     $triggerEle = null;
   }
@@ -219,7 +222,7 @@ import { Popper } from './popper';
       zIndex: options.zIndex,
     };
 
-    popper = new Popper(data);
+    popper = new PopperComponent(data);
     popper.show();
   }
 
@@ -227,5 +230,33 @@ import { Popper } from './popper';
     if (popper) {
       popper.hide();
     }
+  }
+
+  function isTooltipShown() {
+    return $popperEle || $triggerEle;
+  }
+
+  function addScrollEventListeners() {
+    $scrollableElems = DomUtils.getScrollableParents($triggerEle);
+
+    $scrollableElems.forEach(($ele) => {
+      $ele.addEventListener('scroll', onScroll);
+    });
+  }
+
+  function removeScrollEventListeners() {
+    if (!$scrollableElems) {
+      return;
+    }
+
+    $scrollableElems.forEach(($ele) => {
+      $ele.removeEventListener('scroll', onScroll);
+    });
+
+    $scrollableElems = null;
+  }
+
+  function onScroll() {
+    hideTooltip();
   }
 })();

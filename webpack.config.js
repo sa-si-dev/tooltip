@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 
-const banner = `Tooltip v1.0.14
+const banner = `Tooltip v1.0.15
 https://sa-si-dev.github.io/tooltip
 Licensed under MIT (https://github.com/sa-si-dev/tooltip/blob/master/LICENSE)`;
 
@@ -14,7 +14,7 @@ module.exports = (env, options) => {
 
     entry: {
       styles: './src/styles.js',
-      tooltip: './src/tooltip.js',
+      tooltip: ['./node_modules/popper-plugin/dist/popper.min.js', './src/tooltip.js'],
     },
 
     output: {

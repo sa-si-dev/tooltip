@@ -1,6 +1,6 @@
 {
   "name": "tooltip-plugin",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A javascript plugin for tooltip",
   "scripts": {
     "start": "webpack --mode development --watch",
@@ -8,8 +8,15 @@
     "docs": "docsify serve docs"
   },
   "author": "Sa Si Dev",
-  "keywords": ["javascript", "plugin", "tooltip"],
+  "keywords": [
+    "javascript",
+    "plugin",
+    "tooltip"
+  ],
   "license": "ISC",
+  "dependencies": {
+    "popper-plugin": "1.0.x"
+  },
   "devDependencies": {
     "@babel/core": "^7.14.0",
     "@babel/preset-env": "^7.14.0",

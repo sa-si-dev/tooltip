@@ -16,6 +16,10 @@ export class DomUtils {
   }
 
   static getScrollableParents($ele) {
+    if (!$ele) {
+      return [];
+    }
+
     let $scrollableElems = [window];
     let $parent = $ele.parentElement;
 
